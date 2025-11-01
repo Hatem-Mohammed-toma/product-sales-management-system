@@ -49,7 +49,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product)
     {
         $data = $request->validated();
-        
+
         $product->update($data);
 
         return redirect()->route('products')->with('update', 'تم تحديث المنتج بنجاح');
@@ -61,4 +61,18 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products')->with('delete', 'تم حذف المنتج بنجاح');
     }
+
+
+    public function search(Request $request)
+{
+    $query = $request->get('q');
+
+    $products = Product::where('name', 'LIKE', "%{$query}%")
+        ->orWhere('code', 'LIKE', "%{$query}%")
+        ->limit(10)
+        ->get(['id', 'name', 'code', 'price']);
+
+    return response()->json($products);
+}
+
 }

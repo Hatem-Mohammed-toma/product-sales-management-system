@@ -15,9 +15,12 @@ class SaleController extends Controller
         return view('sales.create');
     }
     // إدخال عملية بيع
-    public function store(SaleRequest $request)
+  public function store(SaleRequest $request)
     {
-        $product = Product::where('code', $request->code)->first();
+           // 🔹 البحث بالكود أو الاسم
+    $product = Product::where('code', $request->code)
+                      ->orWhere('name', $request->code) // هنا اسم المنتج بدلاً من الكود
+                      ->first();
 
         if (!$product) {
             return back()->with('notFound', 'المنتج غير موجود!');
@@ -43,20 +46,6 @@ class SaleController extends Controller
         return back()->with('success', 'تم تسجيل البيع بنجاح');
     }
 
-    // تقرير المبيعات حسب كود الفئة
-    // public function reportByCategory($categoryCode)
-    // {
-    //     $sales = Sale::whereHas('product', function ($q) use ($categoryCode) {
-    //         $q->where('category_code', $categoryCode);
-    //     })->with('product')->get();
-
-    //     return view('sales.report_category', [
-    //         'sales' => $sales,
-    //         'categoryCode' => $categoryCode,
-    //         'totalSales' => $sales->sum('total'),
-    //         'profit' => $sales->sum('total') - $sales->sum('cost'),
-    //     ]);
-    // }
     public function report()
     {
         $today = Carbon::today();
