@@ -28,8 +28,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $sale->product->name }}</td>
                                     <td>{{ $sale->quantity }}</td>
-                                    <td>{{ number_format($sale->price, 2) }}</td>
-                                    <td class="fw-bold text-success">{{ number_format($sale->total, 2) }}</td>
+                                    <td>{{ number_format($sale->price, 2) }} ج.م</td>
+                                    <td class="fw-bold text-success">{{ number_format($sale->total, 2) }} ج.م</td>
                                     <td>{{ $sale->order_date }}</td>
                                 </tr>
                             @empty
@@ -64,8 +64,8 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
 
-                                    <td class="fw-bold text-success">{{ number_format($report->total_sum, 2) }}</td>
-                                    <td class="fw-bold text-primary">{{ number_format($report->profit_sum, 2) }}</td>
+                                    <td class="fw-bold text-success">{{ number_format($report->total_sum, 2) }} ج.م</td>
+                                    <td class="fw-bold text-primary">{{ number_format($report->profit_sum, 2) }} ج.م</td>
                                     <td>
                                         <a
                                             href="{{ route('sales.monthly.details', ['year' => $report->year, 'month' => $report->month]) }}">

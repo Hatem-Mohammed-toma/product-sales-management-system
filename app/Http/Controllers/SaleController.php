@@ -45,8 +45,7 @@ class SaleController extends Controller
 
         return back()->with('success', 'تم تسجيل البيع بنجاح');
     }
-
-    public function report()
+  public function report()
     {
         $today = Carbon::today();
         $monthStart = Carbon::now()->startOfMonth();
@@ -78,14 +77,31 @@ class SaleController extends Controller
     public function monthlyDetails($year, $month)
     {
         // المبيعات الخاصة بالشهر المحدد
-        $sales = Sale::whereYear('order_date', $year)
+        $dailyReports = Sale::selectRaw('
+            DATE(order_date) as day,
+            SUM(total) as total_sum,
+            SUM(total) - SUM(cost) as profit_sum
+        ')
+            ->whereYear('order_date', $year)
             ->whereMonth('order_date', $month)
-            ->with('product')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $total = $dailyReports->sum('total_sum');
+        $profit = $dailyReports->sum('profit_sum');
+
+        return view('sales.monthly-details', compact('dailyReports', 'year', 'month', 'total', 'profit'));
+    }
+    public function dailyDetails($date)
+    {
+        $sales = Sale::with('product')
+            ->whereDate('order_date', $date)
             ->get();
 
         $total = $sales->sum('total');
-        $profit = $sales->sum('total') - $sales->sum('cost');
+        $profit = $sales->sum(fn($s) => ($s->price - $s->cost) * $s->quantity);
 
-        return view('sales.monthly-details', compact('sales', 'year', 'month', 'total', 'profit'));
+        return view('sales.daily-details', compact('sales', 'date', 'total', 'profit'));
     }
 }

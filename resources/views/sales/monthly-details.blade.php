@@ -13,30 +13,32 @@
                 <p><strong>إجمالي الأرباح:</strong> {{ number_format($profit, 2) }} ج.م</p>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
+                    <table class="table table-bordered text-center align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
-                                <th>اسم المنتج</th>
-                                <th>الكمية</th>
-                                <th>سعر الوحدة</th>
-                                <th>الإجمالي</th>
-                                <th>التاريخ</th>
+                                <th>إجمالي المبيعات</th>
+                                <th>إجمالي الأرباح</th>
+                                <th>اليوم</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($sales as $sale)
+                            @forelse($dailyReports as $index => $day)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $sale->product->name }}</td>
-                                    <td>{{ $sale->quantity }}</td>
-                                    <td>{{ number_format($sale->price, 2) }}</td>
-                                    <td class="fw-bold text-success">{{ number_format($sale->total, 2) }}</td>
-                                    <td>{{ $sale->order_date }}</td>
+                                    <td>{{ $index + 1 }}</td>
+
+                                    <td class="fw-bold text-success">{{ number_format($day->total_sum, 2) }} ج.م</td>
+                                    <td class="fw-bold text-primary">{{ number_format($day->profit_sum, 2) }} ج.م</td>
+                                    <td>
+                                        <a href="{{ route('sales.daily.details', ['date' => $day->day]) }}">
+                                            {{ $day->day }}
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-muted">لا توجد مبيعات في هذا الشهر</td>
+                                    <td colspan="4" class="text-muted">لا توجد مبيعات في هذا الشهر</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -45,4 +47,5 @@
             </div>
         </div>
     </div>
+
 @endsection
